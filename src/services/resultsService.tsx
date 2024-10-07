@@ -6,6 +6,10 @@ import {
   } from "@smpm/models"
 import { IFormInputImportResults, IResultsModel } from "@smpm/models/resultModel"
   
+  import {
+    IFormInputImportResults,
+    IResultsModel,
+  } from "@smpm/models/resultsModel"
   import axios from "@smpm/services/axios"
   import { saveAs } from "file-saver"
   
