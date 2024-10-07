@@ -30,7 +30,7 @@ const Role: React.FC = () => {
 
   const handleCreate = async () => {
     try {
-      const values = await  form.validateFields();
+      const values = await form.validateFields();
       const response = await createRole(values);
        if (response && response.result) {
         message.success('Role created successfully');

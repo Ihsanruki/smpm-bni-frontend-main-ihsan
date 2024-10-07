@@ -3,20 +3,17 @@ import React, { useCallback, useMemo, useState } from "react";
 import {
   DeleteOutlined,
   EditOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import DataTable from "@smpm/components/DataTable";
-import InputSearchTableView from "@smpm/components/TableView/InputSearchTableView";
-import { IMerchantModel } from "@smpm/models/merchantModel";
-import { regionSearchColumn } from "@smpm/models/regionModel";
-import {
+ import { IMerchantModel } from "@smpm/models/merchantModel";
+ import {
   deleteDataMerchant,
   getDataMerchant,
 } from "@smpm/services/merchantService";
 import { useDebounce } from "@smpm/utils/useDebounce";
 import useTableHelper from "@smpm/utils/useTableHelper";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Card, Col, Row, Table, Button, Flex, Modal } from "antd";
+import { Button, Modal } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
 
@@ -43,7 +40,7 @@ const data_new: DataTypeNew[] = [
 ];
 
 const TableView: React.FC = () => {
-  const [searchColumn, setSearchColumn] = useState<string | null>(null);
+  const [_searchColumn, setSearchColumn] = useState<string | null>(null);
   const navigate = useNavigate();
   const deleteMutation = useMutation({
     mutationFn: deleteDataMerchant,
@@ -65,7 +62,6 @@ const TableView: React.FC = () => {
     data: merchant,
     isLoading,
     refetch,
-    isSuccess,
   } = useQuery({
     queryKey: ["merchant", { ...tableFilter, search }],
     queryFn: () =>
@@ -82,7 +78,6 @@ const TableView: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [merchantData, setMerchantData] = useState<IMerchantModel>({});
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-  const [modalText, setModalText] = useState<string>("Content of the modal");
 
   const showModal = (row: IMerchantModel) => {
     setMerchantData(row);
@@ -284,7 +279,7 @@ const TableView: React.FC = () => {
         useGlobalSearchInput
         onChange={onChangeTable}
         scroll={{ x: true }}
-        responsive
+
       />
     </>
   );

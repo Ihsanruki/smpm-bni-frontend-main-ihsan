@@ -1,5 +1,4 @@
-import FormFieldEDC from "@smpm/components/FormFields/FormFieldEDC";
-import FormFieldMerchant, {
+ import FormFieldMerchant, {
   TFormFieldMerchant,
 } from "@smpm/components/FormFields/FormFieldMerchant";
 import FormWrapper from "@smpm/components/FormWrapper";
@@ -7,9 +6,8 @@ import PageContent from "@smpm/components/PageContent";
 import PageLabel from "@smpm/components/pageLabel";
 import Page from "@smpm/components/pageTitle";
 import { createDataMerchant } from "@smpm/services/merchantService";
-import { getAllRegion } from "@smpm/services/regionService";
-import { IconWashMachine } from "@tabler/icons-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+ import { IconWashMachine } from "@tabler/icons-react";
+import { useMutation } from "@tanstack/react-query";
 import { Breadcrumb, Button, Card, Flex, notification } from "antd";
 import { useNavigate } from "react-router-dom";
 

@@ -28,6 +28,18 @@ export const getActivityJobOrder = async (
 	return response.data
 }
 
+export const getDoneActivityJobOrder = async (  
+	param: IPaginationRequest  
+  ): Promise<IBaseResponseService<IPaginationResponse<IJobOrderModel>>> => {  
+	const response = await axios.get("/job-order/activity", {  
+	  params: {  
+		...param,  
+		status: ['Done'],    
+	  },  
+	});  
+	return response.data;  
+  };  
+
 export const downloadTemplateJobOrderNew = async () => {
 	const response = await axios.get("/job-order/template/download", {
 		responseType: "blob",

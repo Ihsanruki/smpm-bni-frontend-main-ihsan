@@ -1,7 +1,5 @@
 import {
-  CloudUploadOutlined,
   HomeOutlined,
-  VerticalAlignTopOutlined,
 } from "@ant-design/icons";
 import PageContent from "@smpm/components/PageContent";
 import { IconBuildingStore } from "@tabler/icons-react";
@@ -11,20 +9,16 @@ import {
   Card,
   Divider,
   Flex,
-  Modal,
-  Space,
   Typography,
 } from "antd";
-import { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import Page from "@smpm/components/pageTitle";
 import PageLabel from "@smpm/components/pageLabel";
+import Page from "@smpm/components/pageTitle";
 import TableView from "./components/TableView";
- const { Title } = Typography;
+const { Title } = Typography;
 
 const Region = () => {
-  const [ReportModalVisible, setReportModalVisible] = useState(false);
   const navigate = useNavigate();
   const onAddNewMerchant = () => navigate("/merchant/list-merchant/add");
 

@@ -30,7 +30,7 @@ const Vendor: React.FC = () => {
         message.success('Vendor added successfully');
         setIsAddModalVisible(false);
         form.resetFields();
-        setRefreshKey(prevKey => prevKey + 1); 
+        setRefreshKey(prevKey => prevKey + 1); // Trigger a refresh of the table
       } else {
         throw new Error(response.message || 'Failed to add vendor');
       }

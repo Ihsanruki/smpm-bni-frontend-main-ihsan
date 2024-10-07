@@ -43,8 +43,7 @@ const Edit = () => {
 
   const {
     data: merchant,
-    isLoading,
-    isSuccess,
+     isSuccess,
   } = useQuery({
     queryKey: ["merchant", merchantId],
     // @ts-ignore
