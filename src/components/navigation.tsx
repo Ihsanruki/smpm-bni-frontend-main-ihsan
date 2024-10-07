@@ -78,7 +78,7 @@ const items: MenuItem[] = [
     getItem("Vendor", "document/"),  
   ]),     
   getItem("Payment", "payment", <IconCurrencyDollar size="1.2rem" />),  
-  getItem("Approve", "approve", <IconCheckbox size="1.2rem" />),  
+  getItem("Approve", "approve", <IconCheckbox size="1.2rem" />),   
   getItem("Audit", "auditTrail", <IconHistory size="1.2rem" />),  
 ];  
 

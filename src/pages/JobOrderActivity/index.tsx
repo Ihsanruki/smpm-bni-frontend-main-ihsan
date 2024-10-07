@@ -240,7 +240,7 @@ const JobOrderActivity = () => {
 		})
 	}
 
-	const onFinishCancellation = (data) => {
+	const onFinishCancellation = (data: any) => {
 		// TODO : please continue this data to cancel job order
 
 		onFinishHandle({

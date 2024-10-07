@@ -4,6 +4,8 @@ import {
     IPaginationRequest,
     IPaginationResponse,
   } from "@smpm/models"
+import { IFormInputImportResults, IResultsModel } from "@smpm/models/resultModel"
+  
   import {
     IFormInputImportResults,
     IResultsModel,

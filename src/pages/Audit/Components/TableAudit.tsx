@@ -1,162 +1,103 @@
 
-
 import React, { useMemo, useState, useEffect } from 'react';
-import DataTable from "@smpm/components/DataTable";
-import { IAuditTrail } from "@smpm/models/auditModel";
-import { useDebounce } from "@smpm/utils/useDebounce";
-import useTableHelper from "@smpm/utils/useTableHelper";
+import { Table, Tag, message } from 'antd';
 import { ColumnsType } from "antd/es/table";
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { Tag, message } from 'antd';
 import { getAuditTrails } from '@smpm/services/auditService';
-import { IPaginationRequest, IPaginationResponse, IBaseResponseService } from "@smpm/models";
+import { IAuditTrail } from "@smpm/models/auditModel";
 
 const AuditTrailTable: React.FC = () => {
-  const { onChangeTable, onChangeSearchBy } = useTableHelper<IAuditTrail>();
-  const [search, setSearch] = useState<string>("");
-  const debouncedSearch = useDebounce(search, 500);
-
-  const [auditTrails, setAuditTrails] = useState<IPaginationResponse<IAuditTrail> | null>(null);
+  const [auditTrails, setAuditTrails] = useState<IAuditTrail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [pagination, setPagination] = useState<IPaginationRequest>({
-    search: '',
-    page: 1,
-    take: 10,
-    order: 'desc',
-    order_by: 'ActivityDate'
-  });
 
-  const fetchAuditTrails = async () => {  
-    setIsLoading(true);  
-    try {  
-      const response: IBaseResponseService<IPaginationResponse<IAuditTrail>> = await getAuditTrails({  
-        ...pagination,  
-        search: debouncedSearch,  
-        search_by: ['Url', 'ActionName', 'MenuName', 'UserName', 'IpAddress', 'Browser', 'OS', 'AppSource'],  
-      });  
-      console.log('Full API Response:', response);  
-      if (response.result && response.result.data) {  
-        console.log('Audit Trails Data:', response.result.data);  
-        setAuditTrails(response.result);  
-      } else {  
-        console.error('No data in response:', response);  
-      }  
-    } catch (error) {  
-      console.error('Error fetching audit trails:', error);  
-      if (error) {  
-        console.error('Error response:', error);  
-        console.error('Error status:', error);  
-      } else if (error) {  
-        console.error('Error request:', error);  
-      } else {  
-        console.error('Error message:', error);  
-      }  
-      message.error('Failed to fetch audit trails');  
-    } finally {  
-      setIsLoading(false);  
-    }  
+  const fetchAuditTrails = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAuditTrails();
+      console.log('Audit Trails Data:', data);
+      if (data && data.result && Array.isArray(data.result.result)) {
+        setAuditTrails(data.result.result);
+      } else {
+        console.error('Unexpected data format:', data);
+        message.error('Received unexpected data format');
+      }
+    } catch (error) {
+      console.error('Error fetching audit trails:', error);
+      message.error('Failed to fetch audit trails');
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
-  useEffect(() => {  
-    console.log('Fetching audit trails with params:', {  
-      ...pagination,  
-      search: debouncedSearch,  
-      search_by: ['Url', 'ActionName', 'MenuName', 'UserName', 'IpAddress', 'Browser', 'OS', 'AppSource'],  
-    });  
-    fetchAuditTrails();  
-  }, [debouncedSearch, pagination]);  
 
-  const onSearch = (value: string) => setSearch(value);
+  useEffect(() => {
+    fetchAuditTrails();
+  }, []);
 
   const columns: ColumnsType<IAuditTrail> = useMemo((): ColumnsType<IAuditTrail> => {
     return [
       {
         title: "URL",
         dataIndex: "Url",
-        sorter: true,
+        key: "Url",
         ellipsis: true,
       },
       {
         title: "Action",
         dataIndex: "ActionName",
-        sorter: true,
+        key: "ActionName",
       },
       {
         title: "Menu",
         dataIndex: "MenuName",
-        sorter: true,
+        key: "MenuName",
       },
       {
         title: "User",
         dataIndex: "UserName",
-        sorter: true,
+        key: "UserName",
       },
       {
         title: "IP Address",
         dataIndex: "IpAddress",
-        sorter: true,
+        key: "IpAddress",
       },
       {
         title: "Date",
         dataIndex: "ActivityDate",
-        sorter: true,
-        render: (date: string) => new Date(date).toLocaleString(),
+        key: "ActivityDate",
+        render: (date: string) => {
+          const d = new Date(date);
+          return isNaN(d.getTime()) ? 'Invalid Date' : d.toLocaleString();
+        },
       },
       {
         title: "Browser",
         dataIndex: "Browser",
-        sorter: true,
+        key: "Browser",
       },
       {
         title: "OS",
         dataIndex: "OS",
-        sorter: true,
+        key: "OS",
       },
       {
         title: "App Source",
         dataIndex: "AppSource",
-        sorter: true,
+        key: "AppSource",
         render: (source: string) => <Tag color="blue">{source}</Tag>,
       },
     ];
   }, []);
 
-  const handleChangeSearchBy = (value: CheckboxValueType[]) => {
-    onChangeSearchBy(value as string[]);
-  };
-
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    setPagination(prev => ({
-      ...prev,
-      page: pagination.current,
-      take: pagination.pageSize,
-      order: sorter.order === 'descend' ? 'desc' : 'asc',
-      order_by: sorter.field || 'ActivityDate'
-    }));
-    onChangeTable(pagination, filters, sorter);
-  };
-
   return (
-    <>
-      <DataTable<IAuditTrail>
-        dataSource={auditTrails?.data}
-        pagination={{
-          current: auditTrails?.meta.page,
-          pageSize: auditTrails?.meta.take,
-          total: auditTrails?.meta.item_count,
-        }}
-        loading={isLoading}
-        bordered
-        onChangeSearchBy={handleChangeSearchBy}
-        onGlobalSearch={onSearch}
-        columns={columns}
-        useGlobalSearchInput
-        onChange={handleTableChange}
-      />
-    </>
+    <Table<IAuditTrail>
+      dataSource={auditTrails}
+      columns={columns}
+      loading={isLoading}
+      bordered
+      rowKey={(record) => record.id.toString()}
+      scroll={{ x: 'max-content' }}
+    />
   );
 };
 
 export default AuditTrailTable;
- 
-

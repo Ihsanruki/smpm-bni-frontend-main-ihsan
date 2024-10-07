@@ -16,7 +16,7 @@ const Router = () => {
 
 function App() {
 	const { defaultAlgorithm, darkAlgorithm } = theme
-	const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
+	const [isDarkMode, _setIsDarkMode] = useState<boolean>(false)
 
 	// const toggleTheme = () => {
 	// 	setIsDarkMode((previousValue) => !previousValue)

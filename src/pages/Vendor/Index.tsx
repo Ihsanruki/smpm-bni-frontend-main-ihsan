@@ -32,6 +32,8 @@ const Vendor: React.FC = () => {
         message.success('Vendor added successfully');
         setIsAddModalVisible(false);
         form.resetFields();
+         setRefreshKey(prevKey => prevKey + 1); // Trigger a refresh of the table
+      } else {
         setRefreshKey(prevKey => prevKey + 1); 
         queryClient.invalidateQueries({ queryKey: ['vendors'] }); 
        } else {

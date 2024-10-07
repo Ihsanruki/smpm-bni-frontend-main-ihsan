@@ -16,9 +16,10 @@ export const getDataEDC = async (
 ): Promise<
 	IBaseResponseService<IPaginationResponse<ElectronicDataCaptureMachine>>
 > => {
-	const response = await axios.get("/electronic-data-capture", {
-		params: param,
-	})
+	const { order_by, ...validParams } = param;  
+	const response = await axios.get("/electronic-data-capture", {  
+		params: validParams,  
+	  })  
 	return response.data
 }
 
