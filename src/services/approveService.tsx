@@ -67,6 +67,26 @@ export const approveService = {
     const response = await axios.get("/approve/waiting", { params });
     return response.data;
   },
+  approveItem: async (  
+    id: number  
+  ): Promise<IBaseResponseService<ApproveItem>> => {  
+    const response = await axios.patch(`/approve/${id}/approve`);  
+    return response.data;  
+  },  
+
+  bulkApprove: async (  
+    ids: number[]  
+  ): Promise<IBaseResponseService<{ count: number }>> => {  
+    const response = await axios.post("/approve/bulk-approve", { ids });  
+    return response.data;  
+  },  
+
+  getWaitingApprovals: async (  
+    params: IPaginationRequest  
+  ): Promise<IBaseResponseService<IPaginationResponse<ApproveItem>>> => {  
+    const response = await axios.get("/approve/waiting", { params });  
+    return response.data;  
+  },  
 
   searchApprovals: async (
     params: IPaginationRequest & { search: string; search_by?: string[] }

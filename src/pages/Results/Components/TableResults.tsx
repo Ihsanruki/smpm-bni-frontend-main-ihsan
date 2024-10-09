@@ -8,8 +8,9 @@ import { Badge } from "antd"
 import { ColumnsType } from "antd/es/table"
 import * as dayjs from "dayjs"
 import { useMemo, useState } from "react"
-// import { useNavigate } from "react-router-dom"
-
+ // import { useNavigate } from "react-router-dom"
+ import { useNavigate } from "react-router-dom"
+ 
 interface ITableActivityJobOrderProps {
 	filter?: any
 }
@@ -17,11 +18,15 @@ interface ITableActivityJobOrderProps {
 const Results: React.FC<ITableActivityJobOrderProps> = ({
 	filter,
 }) => {
-	// const navigate = useNavigate()
+ 	// const navigate = useNavigate()
 
 	const { tableFilter, onChangeTable, onChangeSearchBy } =
 		useTableHelper<IJobOrderModel>({pagination : true})
+ 	const navigate = useNavigate()
 
+	const { tableFilter, onChangeTable, onChangeSearchBy } =
+		useTableHelper<IJobOrderModel>()
+ 
 	const [search, setSearch] = useState<string>("")
 
 	const searchValue = useDebounce(search, 500)
@@ -39,7 +44,7 @@ const Results: React.FC<ITableActivityJobOrderProps> = ({
 				order_by: tableFilter.sort.order_by,
 				search: searchValue,
 				search_by: tableFilter.searchBy,
-				page: Number(tableFilter.pagination.current),
+ 				page: Number(tableFilter.pagination.current),
 				take: Number(tableFilter.pagination.pageSize),
 				...filter,
 			}),

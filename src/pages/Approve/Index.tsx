@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+ import React, { useState, useEffect } from "react";
 import PageContent from "@smpm/components/PageContent";
 import PageLabel from "@smpm/components/pageLabel";
 import Page from "@smpm/components/pageTitle";
@@ -12,26 +12,40 @@ import {
   HomeOutlined,
   CheckSquareOutlined
 } from "@ant-design/icons";
-const { Title } = Typography;
+ 
+import React, { useState, useEffect } from 'react';
+import PageContent from "@smpm/components/PageContent";
+import PageLabel from "@smpm/components/pageLabel";
+import Page from "@smpm/components/pageTitle";
+import { IconArrowDown } from "@tabler/icons-react";
+import { Breadcrumb, Card, Flex, Typography, message } from "antd";
+import ListNeedApproval from './Components/ListNeedApproval';
+import TableApprove from './Components/TableApprove';
+import { useQuery } from "@tanstack/react-query";
+import { approveService } from '@smpm/services/approveService';
+import { ApproveItem } from '@smpm/models/approveModel';
+
+ const { Title } = Typography;
 
 const Approve: React.FC = () => {
   const [needApprovalData, setNeedApprovalData] = useState<ApproveItem[]>([]);
 
-  const {
+   const {
     data: approveData,
     refetch,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["approve-data"],
+   const { data: approveData, refetch, isLoading, error } = useQuery({
+     queryKey: ["approve-data"],
     queryFn: async () => {
       try {
         const response = await approveService.findAll({
           page: 1,
           take: 100,
-          order: "desc",
-          order_by: "id",
-          search: "",
+          order: 'desc',
+          order_by: 'id',
+          search: '',
           search_by: [],
         });
         console.log("API response:", response);
@@ -45,10 +59,11 @@ const Approve: React.FC = () => {
 
   useEffect(() => {
     if (approveData?.result?.data) {
-      const itemsNeedingApproval = approveData.result.data.filter(
+       const itemsNeedingApproval = approveData.result.data.filter(
         (item) => item.status === "Waiting"
       );
-      console.log("Items needing approval:", itemsNeedingApproval);
+       const itemsNeedingApproval = approveData.result.data.filter(item => item.status === 'Waiting');
+       console.log("Items needing approval:", itemsNeedingApproval);
       setNeedApprovalData(itemsNeedingApproval);
     }
   }, [approveData]);
@@ -74,7 +89,7 @@ const Approve: React.FC = () => {
           <Breadcrumb
             items={[
               {
-                href: "/",
+                 href: "/",
                 title: (
                   <>
                     <HomeOutlined />
@@ -89,7 +104,13 @@ const Approve: React.FC = () => {
                     <CheckSquareOutlined  className='mb-1'/>
                     <span>Approve</span>
                   </div>
-                ),
+                 href: "",
+                title: (
+                  <Flex align="end">
+                    <IconArrowDown/>
+                    <span>Approve</span>
+                  </Flex>
+                 ),
               },
             ]}
           />
@@ -97,7 +118,7 @@ const Approve: React.FC = () => {
       />
       <PageContent>
         <div className="flex flex-col lg:flex-row gap-4">
-          <div className="w-full lg:w-3/3">
+           <div className="w-full lg:w-3/3">
             <Card className="mb-4 lg:mb-0">
               <Title level={5} className="mb-4">
                 Need Approval ({needApprovalData.length})
@@ -106,14 +127,15 @@ const Approve: React.FC = () => {
                 data={needApprovalData}
                 onApprove={handleApprove}
               />
-            </Card>
+             </Card>
           </div>
           <div className="w-full lg:w-2/3">
             <Card>
-              <Title level={5} className="mb-4">
+               <Title level={5} className="mb-4">
                 Approval History
               </Title>
-              <TableApprove refetchData={handleApprove} />
+               <Title level={5} className="mb-4">Approval History</Title>
+               <TableApprove refetchData={handleApprove} />
             </Card>
           </div>
         </div>

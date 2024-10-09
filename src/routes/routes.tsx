@@ -1,5 +1,6 @@
 import { RouteObject } from "react-router-dom"
 import { lazy } from "react"
+import Approve from "@smpm/pages/Approve/Index"
 
 export const GuestLayout = lazy(() => import("@smpm/components/guestLayout"))
 export const SignIn = lazy(() => import("@smpm/pages/SignIn"))
@@ -106,6 +107,10 @@ export const routes: RouteObject[] = [
 				path: "report",
 				element: <Report />,
 			},
+			{  
+				path: "approve",  
+				element: <Approve />,  
+			},
 			{
 				path: "job-order",
 				children: [
@@ -124,6 +129,10 @@ export const routes: RouteObject[] = [
 					{
 						path: "activity/:no_jo",
 						Component: lazy(() => import("@smpm/pages/JobOrderActivity")),
+					},
+					{
+						path: "results",
+						Component: lazy(() => import("@smpm/pages/Results/Index")),
 					},
 					// {
 					// 	path: "preventive-maintenance",

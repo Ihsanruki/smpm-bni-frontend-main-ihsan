@@ -173,7 +173,7 @@ const DataTable = <T extends Record<string, any>>({
 	}, [props.searchByOptions])
 
 	const [selected, setSelected] = useState<CheckboxValueType[]>([])
-	const [options, setOptions] = useState<SearchByOption[]>(search_by_options)
+	const [options, _setOptions] = useState<SearchByOption[]>(search_by_options)
 
 	const onCheckAll = (e: CheckboxChangeEvent) => {
 		if (e.target.checked) {
@@ -216,76 +216,79 @@ const DataTable = <T extends Record<string, any>>({
 	}, [props])
 
 	return (
-		<>
-			{props.useGlobalSearchInput ? (
-				<Input.Search
-					placeholder="Cari Data"
-					onSearch={(value, event) =>
-						props.onGlobalSearch && props.onGlobalSearch(value)
-					}
-					className="flex-none w-full md:w-72 mb-5"
-					enterButton
-					allowClear
-				/>
-			) : null}
-
-			{useSearchByOptions && (
-				<Dropdown
-					trigger={["click"]}
-					dropdownRender={() => (
-						<Card>
-							<h4 className=" font-medium text-gray-500 uppercase font-poppins justify-start mt-0">
-								Search By
-							</h4>
-							<div>
-								<Checkbox
-									indeterminate={selected.length < options.length && selected.length > 0}
-									onChange={onCheckAll}
-									checked={selected.length === options.length}
-								>
-									All
-								</Checkbox>
-							</div>
-							<Checkbox.Group
-								defaultValue={selected}
-								value={selected}
-								onChange={onCheckPartial}
-								style={{
-									flexDirection: "column",
-								}}
-							>
-								{options.map((data) => (
-									<Checkbox value={data.value} className="font-poppins">
-										{data.name}
-									</Checkbox>
-								))}
-							</Checkbox.Group>
-						</Card>
-					)}
-				>
-					<Tooltip
-						placement="bottom"
-						title={"Search By"}
-						arrow={{
-							pointAtCenter: true,
-						}}
-					>
-						<Badge count={selected.length}>
-							<Button
-								shape="circle"
-								size="large"
-								icon={<IconListSearch />}
-								className="border-none"
-							/>
-						</Badge>
-					</Tooltip>
-				</Dropdown>
-			)}
-			{TotalRecords}
-			<div className={"overflow-x-auto"}>
-				<Table {...props} />
-			</div>
-		</>
+		  <>  
+      <div className="flex flex-wrap items-center justify-between mb-4">  
+        <div className="flex items-center space-x-4 mb-4 md:mb-0">  
+          {props.useGlobalSearchInput && (  
+            <Input.Search  
+              placeholder="Cari Data"  
+              onSearch={(value, event) =>  
+                props.onGlobalSearch && props.onGlobalSearch(value)  
+              }  
+              className="w-full md:w-72"  
+              enterButton  
+              allowClear  
+            />  
+          )}  
+          {useSearchByOptions && (  
+            <Dropdown  
+              trigger={["click"]}  
+              dropdownRender={() => (  
+                <Card>  
+                  <h4 className="font-medium text-gray-500 uppercase font-poppins justify-start mt-0">  
+                    Search By  
+                  </h4>  
+                  <div>  
+                    <Checkbox  
+                      indeterminate={selected.length < options.length && selected.length > 0}  
+                      onChange={onCheckAll}  
+                      checked={selected.length === options.length}  
+                    >  
+                      All  
+                    </Checkbox>  
+                  </div>  
+                  <Checkbox.Group  
+                    defaultValue={selected}  
+                    value={selected}  
+                    onChange={onCheckPartial}  
+                    style={{  
+                      flexDirection: "column",  
+                    }}  
+                  >  
+                    {options.map((data) => (  
+                      <Checkbox key={data.value} value={data.value} className="font-poppins">  
+                        {data.name}  
+                      </Checkbox>  
+                    ))}  
+                  </Checkbox.Group>  
+                </Card>  
+              )}  
+            >  
+              <Tooltip  
+                placement="bottom"  
+                title={"Search By"}  
+                arrow={{  
+                  pointAtCenter: true,  
+                }}  
+              >  
+                <Badge count={selected.length}>  
+                  <Button  
+                    shape="circle"  
+                    size="large"  
+                    icon={<IconListSearch />}  
+                    className="border-none"  
+                  />  
+                </Badge>  
+              </Tooltip>  
+            </Dropdown>  
+          )}  
+        </div>  
+        <div>{TotalRecords}</div>  
+      </div>  
+      <div className={"overflow-x-auto"}>  
+        <Table {...props} />  
+      </div>  
+    </>  
 	)
 }
 

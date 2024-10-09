@@ -1,4 +1,17 @@
 
+import { useState } from 'react';
+import { HomeOutlined } from "@ant-design/icons";
+import PageContent from "@smpm/components/PageContent";
+import PageLabel from "@smpm/components/pageLabel";
+import Page from "@smpm/components/pageTitle";
+import { IconSortDescendingNumbers } from "@tabler/icons-react";
+import { Breadcrumb, Card } from "antd";
+import FilterTableResults from './Components/FilterTableResults';
+import TableResults from './Components/TableResults';
+
+const Results = () => {
+  const [filter, setFilter] = useState({});
+ 
 import React, { useState } from 'react';
 import { CloudDownloadOutlined, HomeOutlined } from "@ant-design/icons";
 import PageContent from "@smpm/components/PageContent";

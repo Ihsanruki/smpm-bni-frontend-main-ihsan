@@ -134,7 +134,7 @@ const TERMINAL_DATA: DescriptionsProps["items"] = [
 
 type InfoPenugasanProps = {
 	hide?: boolean
-	no_jo: string
+	no_jo: string 
 }
 
 const InfoPenugasan: React.FC<InfoPenugasanProps> = ({ hide, no_jo }) => {
