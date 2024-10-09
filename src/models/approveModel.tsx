@@ -3,8 +3,8 @@ export interface ApproveItem {
   id_jobOrder: number;  
   vendor_id: number;  
   region_id: number;  
-  reason: string | null;  
-  info_remark: string | null;  
+  reason: string;  
+  info_remark: string;  
   status: string;  
   approved_by: number | null;  
   rejected_by: number | null;  

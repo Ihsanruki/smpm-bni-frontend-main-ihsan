@@ -1,166 +1,262 @@
+import DataTable from "@smpm/components/DataTable"
+import { IJobOrderModel } from "@smpm/models/jobOrderModel"
+import { getDoneActivityJobOrder } from "@smpm/services/jobOrderService"
+import { useDebounce } from "@smpm/utils/useDebounce"
+import useTableHelper from "@smpm/utils/useTableHelper"
+import { useQuery } from "@tanstack/react-query"
+import { Badge } from "antd"
+import { ColumnsType } from "antd/es/table"
+import * as dayjs from "dayjs"
+import { useMemo, useState } from "react"
+// import { useNavigate } from "react-router-dom"
 
-import React, { useMemo, useState } from 'react';
-import DataTable from "@smpm/components/DataTable";
-import { IResultsModel } from "@smpm/models/resultsModel";
-import { getResults } from "@smpm/services/resultsService";
-import { useDebounce } from "@smpm/utils/useDebounce";
-import useTableHelper from "@smpm/utils/useTableHelper";
-import { useQuery } from "@tanstack/react-query";
-import { Badge } from "antd";
-import { ColumnsType } from "antd/es/table";
-import * as dayjs from "dayjs";
-
-interface ITableResultsProps {
-  filter?: any;
+interface ITableActivityJobOrderProps {
+	filter?: any
 }
 
-const TableResults: React.FC<ITableResultsProps> = ({ filter }) => {
-  const { tableFilter, onChangeTable, onChangeSearchBy } = useTableHelper<IResultsModel>();
+const Results: React.FC<ITableActivityJobOrderProps> = ({
+	filter,
+}) => {
+	// const navigate = useNavigate()
 
-  const [search, setSearch] = useState<string>("");
+	const { tableFilter, onChangeTable, onChangeSearchBy } =
+		useTableHelper<IJobOrderModel>({pagination : true})
 
-  const searchValue = useDebounce(search, 500);
+	const [search, setSearch] = useState<string>("")
 
-  const onSearch = (value: string) => setSearch(value);
+	const searchValue = useDebounce(search, 500)
 
-  const {
-    data: results,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["results", { ...tableFilter, searchValue, ...filter }],
-    queryFn: () =>
-      getResults({
-        order: tableFilter.sort.order,
-        order_by: tableFilter.sort.order_by,
-        search: searchValue,
-        search_by: tableFilter.searchBy,
-        page: parseInt(tableFilter.pagination.current),
-        take: parseInt(tableFilter.pagination.pageSize),
-        ...filter,
-      }),
-  });
+	const onSearch = (value: string) => setSearch(value)
 
-  const columns: ColumnsType<IResultsModel> = useMemo(
-    (): ColumnsType<IResultsModel> => {
-      return [
-        {
-          title: "NO. HASIL",
-          dataIndex: "no",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-          width: 300,
-        },
-        {
-          title: "JENIS HASIL",
-          dataIndex: "type",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-        },
-        {
-          title: "WILAYAH",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-          render: (record) => {
-            return record.region.name;
-          },
-        },
-        {
-          title: "VENDOR",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-          render: (record) => {
-            return record.vendor.name;
-          },
-        },
-        {
-          title: "TANGGAL",
-          dataIndex: "date",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-          render: (date) => {
-            return dayjs(date).format("DD-MMM-YYYY");
-          },
-        },
-        {
-          title: "MID",
-          dataIndex: "mid",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-        },
-        {
-          title: "TID",
-          dataIndex: "tid",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-        },
-        {
-          title: "NAMA MERCHANT",
-          dataIndex: "merchant_name",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-        },
-        {
-          title: "ALAMAT",
-          dataIndex: "address",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-        },
-        {
-          title: "KATEGORI MERCHANT",
-          dataIndex: "merchant_category",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-        },
-        {
-          title: "STATUS",
-          dataIndex: "status",
-          sorter: true,
-          sortDirections: ["descend", "ascend"],
-          render: (status) => {
-            return status === "Selesai" ? (
-              <Badge color="green" text={status} />
-            ) : (
-              <Badge color="orange" text={status} />
-            );
-          },
-        },
-      ];
-    },
-    []
-  );
+	const {
+		data: openJobOrder,
+		isLoading,
+ 	} = useQuery({
+		queryKey: ["activity-job-order", { ...tableFilter, searchValue, ...filter }],
+		queryFn: () =>
+			getDoneActivityJobOrder({
+				order: tableFilter.sort.order,
+				order_by: tableFilter.sort.order_by,
+				search: searchValue,
+				search_by: tableFilter.searchBy,
+				page: Number(tableFilter.pagination.current),
+				take: Number(tableFilter.pagination.pageSize),
+				...filter,
+			}),
+	})
 
-  return (
-    <DataTable<IResultsModel>
-      dataSource={results?.result.data}
-      pagination={{
-        current: results?.result.meta.page,
-        pageSize: results?.result.meta.take,
-        total: results?.result.meta.item_count,
-      }}
-      loading={isLoading}
-      bordered
-      onChangeSearchBy={onChangeSearchBy}
-      searchByOptions={[
-        { name: "NO. HASIL", value: "no" },
-        { name: "Jenis", value: "type" },
-        { name: "Wilayah", value: "region.name" },
-        { name: "Vendor", value: "vendor.name" },
-        { name: "MID", value: "mid" },
-        { name: "TID", value: "tid" },
-        { name: "Nama Merchant", value: "merchant_name" },
-        { name: "Kategori Merchant", value: "merchant_category" },
-        { name: "Status", value: "status" },
-      ]}
-      onGlobalSearch={onSearch}
-      columns={columns}
-      useGlobalSearchInput
-      onChange={onChangeTable}
-      scroll={{
-        x: 2000,
-      }}
-    />
-  );
-};
+	const columns: ColumnsType<IJobOrderModel> =
+		useMemo((): ColumnsType<IJobOrderModel> => {
+			return [
+				{
+					title: "NO. JO",
+					dataIndex: "no",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					width: 300,
+				},
+				{
+					title: "JENIS JO",
+					dataIndex: "type",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					render: (type) => {
+						return type.includes("Cancel") ? <Badge color="red" text={type} /> : type
+					},
+				},
+				{
+					title: "STATUS",
+					dataIndex: "status",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					render: (status) => {
+						return (
+							<Badge
+								color={status == "Cancel" ? "red" : status == "Done" ? "green" : "blue"}
+								text={status}
+							/>
+						)
+					},
+				},
+				{
+					title: "PETUGAS",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					render: (record) => {
+						return (
+							<>
+								<span>{record.officer_name}</span>
+							</>
+						)
+					},
+				},
+				{
+					title: "WILAYAH",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					render: (record) => {
+						return record.region.name
+					},
+				},
+				{
+					title: "VENDOR",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					render: (record) => {
+						return record.vendor.name
+					},
+				},
+				{
+					title: "TANGGAL",
+					dataIndex: "date",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					render: (date) => {
+						return dayjs(date).format("DD-MMM-YYYY")
+					},
+				},
+				{
+					title: "MID",
+					dataIndex: "mid",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "TID",
+					dataIndex: "tid",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "NAMA MERCHANT",
+					dataIndex: "merchant_name",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "ADDRESS 1",
+					dataIndex: "address1",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "ADDRESS 2",
+					dataIndex: "address2",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "ADDRESS 3",
+					dataIndex: "address3",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "ADDRESS 4",
+					dataIndex: "address4",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "KATEGORI MERCHANT",
+					dataIndex: "merchant_category",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+				},
+				{
+					title: "KATEGORI SEWA/MILIK",
+					dataIndex: "ownership",
+					sorter: true,
+					sortDirections: ["descend", "ascend"],
+					render: (ownership) => {
+						return ownership == "Milik" ? (
+							<Badge key="orange" color="orange" text={ownership} />
+						) : (
+							<Badge key="cyan" color="cyan" text={ownership} />
+						)
+					},
+				},
+				{
+					title: "ACTION",
+					render: (record) => {
+						if (record.type.includes("Cancel")) return "No action"
+						if (["Done", "Cancel"].includes(record.status)) return "Done activity"
+						return (
+							<a
+								onClick={() => {
+									window.open(`/job-order/activity/${record.no}`, "_blank", "noreferrer")
+								}}
+							>
+								Activity
+							</a>
+						)
+					},
+				},
+			]
+		}, [])
 
-export default TableResults;
+	return (
+		<DataTable<IJobOrderModel>
+			dataSource={openJobOrder?.result.data}
+			pagination={{
+				current: openJobOrder?.result.meta.page,
+				pageSize: openJobOrder?.result.meta.take,
+				total: openJobOrder?.result.meta.item_count,
+			}}
+			loading={isLoading}
+			bordered
+			onChangeSearchBy={onChangeSearchBy}
+			searchByOptions={[
+				{
+					name: "NO. JO",
+					value: "no",
+				},
+				{
+					name: "Jenis",
+					value: "type",
+				},
+				{
+					name: "Wilayah",
+					value: "region.name",
+				},
+				{
+					name: "Vendor",
+					value: "vendor.name",
+				},
+				{
+					name: "MID",
+					value: "mid",
+				},
+				{
+					name: "TID",
+					value: "tid",
+				},
+				{
+					name: "Nama Merchant",
+					value: "merchant_name",
+				},
+				{
+					name: "TID",
+					value: "tid",
+				},
+				{
+					name: "Kategori Merchant",
+					value: "merchant_category",
+				},
+				{
+					name: "Kategori Sewa/Milik",
+					value: "ownership",
+				},
+			]}
+			onGlobalSearch={onSearch}
+			columns={columns}
+			useGlobalSearchInput
+			onChange={onChangeTable}
+			scroll={{
+				x: 3000,
+			}}
+		/>
+	)
+}
+
+export default Results
